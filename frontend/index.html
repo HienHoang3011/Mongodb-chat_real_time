@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="A powerful and visually stunning web interface to query MongoDB databases.">
+    <title>MongoDB Query Studio</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="background-elements">
+        <div class="blob blob-1"></div>
+        <div class="blob blob-2"></div>
+    </div>
+    
+    <!-- Top Navigation Bar -->
+    <header class="top-navbar glass-panel">
+        <div class="brand">
+            <h1>Mongo<span class="highlight">Query Studio</span></h1>
+            <p>Execute and visualize your NoSQL queries</p>
+        </div>
+    </header>
+
+    <div class="studio-wrapper">
+        <!-- Sidebar / Left Panel: Docs & Info -->
+        <aside class="studio-sidebar glass-panel">
+            <div class="docs-content">
+                <h3>Thiết kế Collection</h3>
+                
+                <h4>1. Collection Users (Thông tin Người dùng)</h4>
+                <div class="table-responsive">
+                    <table class="schema-table">
+                        <thead><tr><th>STT</th><th>Tên thuộc tính</th><th>Kiểu dữ liệu</th><th>Ý nghĩa</th></tr></thead>
+                        <tbody>
+                            <tr><td>1</td><td>userId (PK)</td><td>ObjectId</td><td>Khóa chính định danh duy nhất cho người dùng</td></tr>
+                            <tr><td>2</td><td>userName</td><td>String</td><td>Tên đăng nhập (Unique)</td></tr>
+                            <tr><td>3</td><td>email</td><td>String</td><td>Địa chỉ liên lạc duy nhất (Unique)</td></tr>
+                            <tr><td>4</td><td>password</td><td>String</td><td>Mật khẩu đã được mã hóa</td></tr>
+                            <tr><td>5</td><td>avatarUrl</td><td>String</td><td>Đường dẫn đến ảnh đại diện</td></tr>
+                            <tr><td>6</td><td>blockedUsers</td><td>Array[ObjectId]</td><td>Danh sách ID những người dùng bị chặn</td></tr>
+                            <tr><td>7</td><td>lastActive</td><td>Date</td><td>Thời điểm hoạt động cuối cùng trên ứng dụng</td></tr>
+                            <tr><td>8</td><td>isOnline</td><td>Boolean</td><td>Trạng thái sẵn sàng trò chuyện</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <h4>2. Collection Conversations (Không gian Trò chuyện)</h4>
+                <div class="table-responsive">
+                    <table class="schema-table">
+                        <thead><tr><th>STT</th><th>Tên thuộc tính</th><th>Kiểu dữ liệu</th><th>Ý nghĩa</th></tr></thead>
+                        <tbody>
+                            <tr><td>1</td><td>conversationId (PK)</td><td>ObjectId</td><td>Khóa chính định danh phòng chat</td></tr>
+                            <tr><td>2</td><td>type</td><td>String</td><td>Kiểu hội thoại ("Direct" hoặc "Group")</td></tr>
+                            <tr><td>3</td><td>participants</td><td>Array[ObjectId]</td><td>Danh sách ID các thành viên tham gia</td></tr>
+                            <tr><td>4</td><td>groupName</td><td>String</td><td>Tên nhóm (Chỉ dành cho type = Group)</td></tr>
+                            <tr><td>5</td><td>admins</td><td>Array[ObjectId]</td><td>Danh sách ID người quản trị/chủ nhóm</td></tr>
+                            <tr><td>6</td><td>lastMessageId</td><td>ObjectId</td><td>Tham chiếu đến tin nhắn mới nhất để hiển thị nhanh</td></tr>
+                            <tr><td>7</td><td>updatedAt</td><td>Date</td><td>Thời gian cập nhật để sắp xếp danh sách phòng chat</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <h4>3. Collection Messages (Nội dung Tin nhắn)</h4>
+                <div class="table-responsive">
+                    <table class="schema-table">
+                        <thead><tr><th>STT</th><th>Tên thuộc tính</th><th>Kiểu dữ liệu</th><th>Ý nghĩa</th></tr></thead>
+                        <tbody>
+                            <tr><td>1</td><td>messageId (PK)</td><td>ObjectId</td><td>Khóa chính định danh duy nhất của tin nhắn</td></tr>
+                            <tr><td>2</td><td>conversationId</td><td>ObjectId</td><td>Tham chiếu phòng chat chứa tin nhắn này</td></tr>
+                            <tr><td>3</td><td>senderId</td><td>ObjectId</td><td>Tham chiếu người gửi tin nhắn</td></tr>
+                            <tr><td>4</td><td>messageType</td><td>String</td><td>Phân loại: "Text", "Image", "File", "System"</td></tr>
+                            <tr><td>5</td><td>content</td><td>String</td><td>Nội dung tin nhắn (nếu là text) hoặc mô tả</td></tr>
+                            <tr><td>6</td><td>readBy</td><td>Array[Object]</td><td>Mảng chứa {userId, readAt} ghi nhận ai đã xem và lúc nào</td></tr>
+                            <tr><td>7</td><td>createdAt</td><td>Date</td><td>Thời gian tin nhắn được gửi (chính xác đến ms)</td></tr>
+                            <tr><td>8</td><td>isHidden</td><td>Boolean</td><td>Cờ đánh dấu tin nhắn đã bị người gửi "Xóa/Thu hồi"</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <h4>4. Collection Attachments (Quản lý Tệp tin)</h4>
+                <div class="table-responsive">
+                    <table class="schema-table">
+                        <thead><tr><th>STT</th><th>Tên thuộc tính</th><th>Kiểu dữ liệu</th><th>Ý nghĩa</th></tr></thead>
+                        <tbody>
+                            <tr><td>1</td><td>attachmentId (PK)</td><td>ObjectId</td><td>Khóa chính định danh tệp tin</td></tr>
+                            <tr><td>2</td><td>messageId</td><td>ObjectId</td><td>Tham chiếu đến tin nhắn mang tệp tin này</td></tr>
+                            <tr><td>3</td><td>fileName</td><td>String</td><td>Tên gốc của tệp tin</td></tr>
+                            <tr><td>4</td><td>fileType</td><td>String</td><td>Định dạng tệp (image/jpeg, video/mp4, pdf,...)</td></tr>
+                            <tr><td>5</td><td>fileSize</td><td>Number</td><td>Dung lượng tệp (Bytes)</td></tr>
+                            <tr><td>6</td><td>fileUrl</td><td>String</td><td>Đường dẫn lưu trữ (trên Cloud/S3) để ứng dụng tải về</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <h4>5. Collection Notifications (Thông báo chờ)</h4>
+                <div class="table-responsive">
+                    <table class="schema-table">
+                        <thead><tr><th>STT</th><th>Tên thuộc tính</th><th>Kiểu dữ liệu</th><th>Ý nghĩa</th></tr></thead>
+                        <tbody>
+                            <tr><td>1</td><td>notificationId (PK)</td><td>ObjectId</td><td>Khóa chính định danh thông báo</td></tr>
+                            <tr><td>2</td><td>userId</td><td>ObjectId</td><td>Tham chiếu người nhận thông báo</td></tr>
+                            <tr><td>3</td><td>title</td><td>String</td><td>Tiêu đề hiển thị trên màn hình khóa</td></tr>
+                            <tr><td>4</td><td>body</td><td>String</td><td>Nội dung tóm tắt của tin nhắn</td></tr>
+                            <tr><td>5</td><td>isDelivered</td><td>Boolean</td><td>Trạng thái đã đẩy thành công xuống thiết bị chưa</td></tr>
+                            <tr><td>6</td><td>createdAt</td><td>Date</td><td>Thời gian tạo thông báo</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <h3>Mô tả mối quan hệ giữa các Collection</h3>
+                <p class="relation-text">Dù sử dụng NoSQL, các thực thể vẫn có sự liên kết chặt chẽ về mặt logic:</p>
+                <div class="relation-item"><strong>Users – Conversations (Nhiều - Nhiều):</strong> Một người dùng có thể tham gia nhiều phòng chat. Mối quan hệ này được thể hiện trực tiếp qua mảng participants (chứa các userId) được lưu ngay bên trong collection Conversations.</div>
+                <div class="relation-item"><strong>Conversations – Messages (Một - Nhiều):</strong> Một phòng chat chứa hàng ngàn tin nhắn. Thuộc tính conversationId nằm trong collection Messages được thiết lập làm Index (chỉ mục) để truy vấn toàn bộ lịch sử trò chuyện của phòng đó với tốc độ cao.</div>
+                <div class="relation-item"><strong>Users – Messages (Một - Nhiều):</strong> Một tin nhắn do một tác giả tạo lập. Tham chiếu qua senderId trong Messages tới userId trong Users.</div>
+                <div class="relation-item"><strong>Messages – Attachments (Một - Nhiều):</strong> Một tin nhắn có thể chứa hoặc đính kèm nhiều hình ảnh/file khác nhau. Thuộc tính messageId trong Attachments.</div>
+                <div class="relation-item"><strong>Tối ưu hóa (Denormalization):</strong> Thuộc tính lastMessageId trong Conversations hoạt động như một cầu nối lưu trữ sẵn (cache).</div>
+            </div>
+        </aside>
+
+        <!-- Main Content / Right Panel: Studio Tools -->
+        <main class="studio-main glass-panel">
+            <div class="workspace-area">
+                <section class="query-section">
+                    <div class="connection-group">
+                        <input type="hidden" id="dbName" value="ChatRealTimeDB">
+                        <div class="input-field">
+                            <label for="collectionName">Collection Name</label>
+                            <select id="collectionName" required>
+                                <option value="" disabled selected>Loading...</option>
+                            </select>
+                        </div>
+                        <div class="input-field">
+                            <label for="queryType">Operation</label>
+                            <select id="queryType">
+                                <option value="find">Find</option>
+                                <option value="insert">Insert</option>
+                                <option value="update">Update</option>
+                                <option value="delete">Delete</option>
+                                <option value="aggregate">Aggregate</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="editor-group">
+                        <label for="queryEditor">Query Body (JSON)</label>
+                        <div id="queryEditor" class="editor-container"></div>
+                    </div>
+
+                    <button id="runQueryBtn" class="btn-primary">
+                        <span class="btn-text">Execute Query</span>
+                        <svg class="icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M5 12H19M19 12L12 5M19 12L12 19" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                        </svg>
+                    </button>
+                </section>
+            <section class="result-section">
+                <div class="result-header">
+                    <h2>Execution Results</h2>
+                    <div class="status-indicator" id="statusIndicator">Ready</div>
+                </div>
+                <div class="output-container">
+                    <pre id="resultOutput" class="code-block">// Results will appear here...</pre>
+                </div>
+            </section>
+            </div>
+        </main>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/ace/1.32.7/ace.js"></script>
+    <script src="script.js"></script>
+</body>
+</html>
