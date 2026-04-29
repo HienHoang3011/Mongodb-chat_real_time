@@ -30,93 +30,127 @@
             <div class="docs-content">
                 <h3>Thiết kế Collection</h3>
                 
-                <h4>1. Collection Users (Thông tin Người dùng)</h4>
+                <h4>1. Collection users (Thông tin Người dùng)</h4>
                 <div class="table-responsive">
                     <table class="schema-table">
                         <thead><tr><th>STT</th><th>Tên thuộc tính</th><th>Kiểu dữ liệu</th><th>Ý nghĩa</th></tr></thead>
                         <tbody>
-                            <tr><td>1</td><td>userId (PK)</td><td>ObjectId</td><td>Khóa chính định danh duy nhất cho người dùng</td></tr>
-                            <tr><td>2</td><td>userName</td><td>String</td><td>Tên đăng nhập (Unique)</td></tr>
-                            <tr><td>3</td><td>email</td><td>String</td><td>Địa chỉ liên lạc duy nhất (Unique)</td></tr>
-                            <tr><td>4</td><td>password</td><td>String</td><td>Mật khẩu đã được mã hóa</td></tr>
-                            <tr><td>5</td><td>avatarUrl</td><td>String</td><td>Đường dẫn đến ảnh đại diện</td></tr>
-                            <tr><td>6</td><td>blockedUsers</td><td>Array[ObjectId]</td><td>Danh sách ID những người dùng bị chặn</td></tr>
-                            <tr><td>7</td><td>lastActive</td><td>Date</td><td>Thời điểm hoạt động cuối cùng trên ứng dụng</td></tr>
-                            <tr><td>8</td><td>isOnline</td><td>Boolean</td><td>Trạng thái sẵn sàng trò chuyện</td></tr>
+                            <tr><td>1</td><td>_id</td><td>ObjectId</td><td>Khóa chính định danh duy nhất cho người dùng</td></tr>
+                            <tr><td>2</td><td>username</td><td>String</td><td>Tên đăng nhập (Unique, Required)</td></tr>
+                            <tr><td>3</td><td>email</td><td>String</td><td>Địa chỉ email (Unique, Required)</td></tr>
+                            <tr><td>4</td><td>password_hash</td><td>String</td><td>Mật khẩu đã được mã hóa (Required)</td></tr>
+                            <tr><td>5</td><td>display_name</td><td>String</td><td>Tên hiển thị (Required)</td></tr>
+                            <tr><td>6</td><td>avatar_url</td><td>String | null</td><td>Đường dẫn đến ảnh đại diện</td></tr>
+                            <tr><td>7</td><td>bio</td><td>String | null</td><td>Tiểu sử cá nhân</td></tr>
+                            <tr><td>8</td><td>last_seen</td><td>Date</td><td>Lần truy cập cuối cùng (Required)</td></tr>
+                            <tr><td>9</td><td>device_tokens</td><td>Array[String]</td><td>Token thiết bị cho push notifications</td></tr>
+                            <tr><td>10</td><td>is_active</td><td>Boolean</td><td>Trạng thái hoạt động</td></tr>
+                            <tr><td>11</td><td>role</td><td>String (enum)</td><td>Vai trò: "user" hoặc "admin"</td></tr>
+                            <tr><td>12</td><td>created_at</td><td>Date</td><td>Ngày tạo tài khoản (Required)</td></tr>
                         </tbody>
                     </table>
                 </div>
 
-                <h4>2. Collection Conversations (Không gian Trò chuyện)</h4>
+                <h4>2. Collection friendships (Quản lý bạn bè)</h4>
                 <div class="table-responsive">
                     <table class="schema-table">
                         <thead><tr><th>STT</th><th>Tên thuộc tính</th><th>Kiểu dữ liệu</th><th>Ý nghĩa</th></tr></thead>
                         <tbody>
-                            <tr><td>1</td><td>conversationId (PK)</td><td>ObjectId</td><td>Khóa chính định danh phòng chat</td></tr>
-                            <tr><td>2</td><td>type</td><td>String</td><td>Kiểu hội thoại ("Direct" hoặc "Group")</td></tr>
-                            <tr><td>3</td><td>participants</td><td>Array[ObjectId]</td><td>Danh sách ID các thành viên tham gia</td></tr>
-                            <tr><td>4</td><td>groupName</td><td>String</td><td>Tên nhóm (Chỉ dành cho type = Group)</td></tr>
-                            <tr><td>5</td><td>admins</td><td>Array[ObjectId]</td><td>Danh sách ID người quản trị/chủ nhóm</td></tr>
-                            <tr><td>6</td><td>lastMessageId</td><td>ObjectId</td><td>Tham chiếu đến tin nhắn mới nhất để hiển thị nhanh</td></tr>
-                            <tr><td>7</td><td>updatedAt</td><td>Date</td><td>Thời gian cập nhật để sắp xếp danh sách phòng chat</td></tr>
+                            <tr><td>1</td><td>_id</td><td>ObjectId</td><td>Khóa chính định danh quan hệ bạn bè</td></tr>
+                            <tr><td>2</td><td>requester_id</td><td>ObjectId</td><td>ID người gửi yêu cầu kết bạn (Required)</td></tr>
+                            <tr><td>3</td><td>recipient_id</td><td>ObjectId</td><td>ID người nhận yêu cầu (Required)</td></tr>
+                            <tr><td>4</td><td>status</td><td>String (enum)</td><td>Trạng thái: "pending", "accepted", "blocked" (Required)</td></tr>
+                            <tr><td>5</td><td>created_at</td><td>Date</td><td>Ngày gửi yêu cầu (Required)</td></tr>
+                            <tr><td>6</td><td>updated_at</td><td>Date</td><td>Ngày cập nhật trạng thái (Required)</td></tr>
                         </tbody>
                     </table>
                 </div>
 
-                <h4>3. Collection Messages (Nội dung Tin nhắn)</h4>
+                <h4>3. Collection conversations (Không gian Trò chuyện)</h4>
                 <div class="table-responsive">
                     <table class="schema-table">
                         <thead><tr><th>STT</th><th>Tên thuộc tính</th><th>Kiểu dữ liệu</th><th>Ý nghĩa</th></tr></thead>
                         <tbody>
-                            <tr><td>1</td><td>messageId (PK)</td><td>ObjectId</td><td>Khóa chính định danh duy nhất của tin nhắn</td></tr>
-                            <tr><td>2</td><td>conversationId</td><td>ObjectId</td><td>Tham chiếu phòng chat chứa tin nhắn này</td></tr>
-                            <tr><td>3</td><td>senderId</td><td>ObjectId</td><td>Tham chiếu người gửi tin nhắn</td></tr>
-                            <tr><td>4</td><td>messageType</td><td>String</td><td>Phân loại: "Text", "Image", "File", "System"</td></tr>
-                            <tr><td>5</td><td>content</td><td>String</td><td>Nội dung tin nhắn (nếu là text) hoặc mô tả</td></tr>
-                            <tr><td>6</td><td>readBy</td><td>Array[Object]</td><td>Mảng chứa {userId, readAt} ghi nhận ai đã xem và lúc nào</td></tr>
-                            <tr><td>7</td><td>createdAt</td><td>Date</td><td>Thời gian tin nhắn được gửi (chính xác đến ms)</td></tr>
-                            <tr><td>8</td><td>isHidden</td><td>Boolean</td><td>Cờ đánh dấu tin nhắn đã bị người gửi "Xóa/Thu hồi"</td></tr>
+                            <tr><td>1</td><td>_id</td><td>ObjectId</td><td>Khóa chính định danh phòng chat</td></tr>
+                            <tr><td>2</td><td>type</td><td>String (enum)</td><td>Kiểu hội thoại: "direct" hoặc "group" (Required)</td></tr>
+                            <tr><td>3</td><td>name</td><td>String | null</td><td>Tên nhóm (chỉ dành cho group)</td></tr>
+                            <tr><td>4</td><td>avatar_url</td><td>String | null</td><td>Ảnh đại diện cuộc trò chuyện</td></tr>
+                            <tr><td>5</td><td>member_ids</td><td>Array[ObjectId]</td><td>Danh sách ID các thành viên (Required, min 2)</td></tr>
+                            <tr><td>6</td><td>last_messages</td><td>Array</td><td>Mảng 3 tin nhắn mới nhất (denormalization)</td></tr>
+                            <tr><td>7</td><td>created_by</td><td>ObjectId</td><td>ID người tạo cuộc hội thoại (Required)</td></tr>
+                            <tr><td>8</td><td>created_at</td><td>Date</td><td>Ngày tạo (Required)</td></tr>
+                            <tr><td>9</td><td>updated_at</td><td>Date</td><td>Ngày cập nhật cuối cùng (Required)</td></tr>
                         </tbody>
                     </table>
                 </div>
 
-                <h4>4. Collection Attachments (Quản lý Tệp tin)</h4>
+                <h4>4. Collection conversation_members (Thành viên Nhóm)</h4>
                 <div class="table-responsive">
                     <table class="schema-table">
                         <thead><tr><th>STT</th><th>Tên thuộc tính</th><th>Kiểu dữ liệu</th><th>Ý nghĩa</th></tr></thead>
                         <tbody>
-                            <tr><td>1</td><td>attachmentId (PK)</td><td>ObjectId</td><td>Khóa chính định danh tệp tin</td></tr>
-                            <tr><td>2</td><td>messageId</td><td>ObjectId</td><td>Tham chiếu đến tin nhắn mang tệp tin này</td></tr>
-                            <tr><td>3</td><td>fileName</td><td>String</td><td>Tên gốc của tệp tin</td></tr>
-                            <tr><td>4</td><td>fileType</td><td>String</td><td>Định dạng tệp (image/jpeg, video/mp4, pdf,...)</td></tr>
-                            <tr><td>5</td><td>fileSize</td><td>Number</td><td>Dung lượng tệp (Bytes)</td></tr>
-                            <tr><td>6</td><td>fileUrl</td><td>String</td><td>Đường dẫn lưu trữ (trên Cloud/S3) để ứng dụng tải về</td></tr>
+                            <tr><td>1</td><td>_id</td><td>ObjectId</td><td>Khóa chính</td></tr>
+                            <tr><td>2</td><td>conversation_id</td><td>ObjectId</td><td>ID cuộc hội thoại (Required)</td></tr>
+                            <tr><td>3</td><td>user_id</td><td>ObjectId</td><td>ID người dùng (Required)</td></tr>
+                            <tr><td>4</td><td>role</td><td>String (enum)</td><td>Vai trò: "owner", "admin", "member" (Required)</td></tr>
+                            <tr><td>5</td><td>is_muted</td><td>Boolean</td><td>Có tắt thông báo không</td></tr>
+                            <tr><td>6</td><td>last_read_messages_id</td><td>ObjectId | null</td><td>ID tin nhắn cuối cùng đã đọc</td></tr>
+                            <tr><td>7</td><td>joined_at</td><td>Date</td><td>Ngày tham gia nhóm (Required)</td></tr>
                         </tbody>
                     </table>
                 </div>
 
-                <h4>5. Collection Notifications (Thông báo chờ)</h4>
+                <h4>5. Collection messages (Nội dung Tin nhắn)</h4>
                 <div class="table-responsive">
                     <table class="schema-table">
                         <thead><tr><th>STT</th><th>Tên thuộc tính</th><th>Kiểu dữ liệu</th><th>Ý nghĩa</th></tr></thead>
                         <tbody>
-                            <tr><td>1</td><td>notificationId (PK)</td><td>ObjectId</td><td>Khóa chính định danh thông báo</td></tr>
-                            <tr><td>2</td><td>userId</td><td>ObjectId</td><td>Tham chiếu người nhận thông báo</td></tr>
-                            <tr><td>3</td><td>title</td><td>String</td><td>Tiêu đề hiển thị trên màn hình khóa</td></tr>
-                            <tr><td>4</td><td>body</td><td>String</td><td>Nội dung tóm tắt của tin nhắn</td></tr>
-                            <tr><td>5</td><td>isDelivered</td><td>Boolean</td><td>Trạng thái đã đẩy thành công xuống thiết bị chưa</td></tr>
-                            <tr><td>6</td><td>createdAt</td><td>Date</td><td>Thời gian tạo thông báo</td></tr>
+                            <tr><td>1</td><td>_id</td><td>ObjectId</td><td>Khóa chính định danh duy nhất của tin nhắn</td></tr>
+                            <tr><td>2</td><td>conversation_id</td><td>ObjectId</td><td>ID cuộc hội thoại (Required)</td></tr>
+                            <tr><td>3</td><td>sender_id</td><td>ObjectId</td><td>ID người gửi tin nhắn (Required)</td></tr>
+                            <tr><td>4</td><td>type</td><td>String (enum)</td><td>Loại tin: "text", "image", "file", "audio", "video", "system" (Required)</td></tr>
+                            <tr><td>5</td><td>content</td><td>String | null</td><td>Nội dung tin nhắn text</td></tr>
+                            <tr><td>6</td><td>attachment_id</td><td>ObjectId | null</td><td>ID tệp đính kèm (nếu có)</td></tr>
+                            <tr><td>7</td><td>reply_to_id</td><td>ObjectId | null</td><td>ID tin nhắn được trả lời (reply)</td></tr>
+                            <tr><td>8</td><td>reactions</td><td>Array</td><td>Mảng reactions (emoji) từ các thành viên</td></tr>
+                            <tr><td>9</td><td>is_recalled</td><td>Boolean</td><td>Tin nhắn đã bị thu hồi</td></tr>
+                            <tr><td>10</td><td>created_at</td><td>Date</td><td>Ngày giờ gửi tin nhắn (Required)</td></tr>
                         </tbody>
                     </table>
                 </div>
 
-                <h3>Mô tả mối quan hệ giữa các Collection</h3>
-                <p class="relation-text">Dù sử dụng NoSQL, các thực thể vẫn có sự liên kết chặt chẽ về mặt logic:</p>
-                <div class="relation-item"><strong>Users – Conversations (Nhiều - Nhiều):</strong> Một người dùng có thể tham gia nhiều phòng chat. Mối quan hệ này được thể hiện trực tiếp qua mảng participants (chứa các userId) được lưu ngay bên trong collection Conversations.</div>
-                <div class="relation-item"><strong>Conversations – Messages (Một - Nhiều):</strong> Một phòng chat chứa hàng ngàn tin nhắn. Thuộc tính conversationId nằm trong collection Messages được thiết lập làm Index (chỉ mục) để truy vấn toàn bộ lịch sử trò chuyện của phòng đó với tốc độ cao.</div>
-                <div class="relation-item"><strong>Users – Messages (Một - Nhiều):</strong> Một tin nhắn do một tác giả tạo lập. Tham chiếu qua senderId trong Messages tới userId trong Users.</div>
-                <div class="relation-item"><strong>Messages – Attachments (Một - Nhiều):</strong> Một tin nhắn có thể chứa hoặc đính kèm nhiều hình ảnh/file khác nhau. Thuộc tính messageId trong Attachments.</div>
-                <div class="relation-item"><strong>Tối ưu hóa (Denormalization):</strong> Thuộc tính lastMessageId trong Conversations hoạt động như một cầu nối lưu trữ sẵn (cache).</div>
+                <h4>6. Collection attachments (Quản lý Tệp tin)</h4>
+                <div class="table-responsive">
+                    <table class="schema-table">
+                        <thead><tr><th>STT</th><th>Tên thuộc tính</th><th>Kiểu dữ liệu</th><th>Ý nghĩa</th></tr></thead>
+                        <tbody>
+                            <tr><td>1</td><td>_id</td><td>ObjectId</td><td>Khóa chính định danh tệp tin</td></tr>
+                            <tr><td>2</td><td>uploader_id</td><td>ObjectId</td><td>ID người upload (Required)</td></tr>
+                            <tr><td>3</td><td>original_name</td><td>String</td><td>Tên gốc của tệp tin (Required)</td></tr>
+                            <tr><td>4</td><td>mime_type</td><td>String</td><td>Loại MIME (image/jpeg, video/mp4, ...) (Required)</td></tr>
+                            <tr><td>5</td><td>size_bytes</td><td>Number</td><td>Dung lượng tệp (Bytes) (Required)</td></tr>
+                            <tr><td>6</td><td>storage_path</td><td>String</td><td>Đường dẫn lưu trữ trên server/cloud (Required)</td></tr>
+                            <tr><td>7</td><td>created_at</td><td>Date</td><td>Ngày upload (Required)</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <h4>7. Collection notifications (Thông báo)</h4>
+                <div class="table-responsive">
+                    <table class="schema-table">
+                        <thead><tr><th>STT</th><th>Tên thuộc tính</th><th>Kiểu dữ liệu</th><th>Ý nghĩa</th></tr></thead>
+                        <tbody>
+                            <tr><td>1</td><td>_id</td><td>ObjectId</td><td>Khóa chính định danh thông báo</td></tr>
+                            <tr><td>2</td><td>recipient_id</td><td>ObjectId</td><td>ID người nhận thông báo (Required)</td></tr>
+                            <tr><td>3</td><td>type</td><td>String (enum)</td><td>Loại: "new_message", "friend_request", "group_invite", "mention" (Required)</td></tr>
+                            <tr><td>4</td><td>title</td><td>String</td><td>Tiêu đề thông báo (Required)</td></tr>
+                            <tr><td>5</td><td>body</td><td>String</td><td>Nội dung thông báo (Required)</td></tr>
+                            <tr><td>6</td><td>reference_id</td><td>ObjectId | null</td><td>ID tài nguyên liên quan (message, friendship, ...)</td></tr>
+                            <tr><td>7</td><td>is_read</td><td>Boolean</td><td>Đã đọc thông báo chưa</td></tr>
+                            <tr><td>8</td><td>created_at</td><td>Date</td><td>Ngày tạo thông báo - TTL: 30 ngày (Required)</td></tr>
+                        </tbody>
+                    </table>
+                </div>
             </div>
         </aside>
 
@@ -125,7 +159,7 @@
             <div class="workspace-area">
                 <section class="query-section">
                     <div class="connection-group">
-                        <input type="hidden" id="dbName" value="ChatRealTimeDB">
+                        <input type="hidden" id="dbName" value="ChatRealtimeDB">
                         <div class="input-field">
                             <label for="collectionName">Collection Name</label>
                             <select id="collectionName" required>

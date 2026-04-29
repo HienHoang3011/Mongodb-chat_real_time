@@ -7,15 +7,19 @@ document.addEventListener('DOMContentLoaded', async () => {
 
     // Initialize Ace Editor
     const editor = ace.edit("queryEditor");
-    editor.setTheme("ace/theme/tomorrow_night_eighties");
+    editor.setTheme("ace/theme/monokai");
     editor.session.setMode("ace/mode/json");
     editor.setOptions({
         fontSize: "14px",
         showPrintMargin: false,
         showGutter: true,
-        highlightActiveLine: false,
+        highlightActiveLine: true,
         wrap: true,
-        useWorker: false
+        useWorker: true,
+        tabSize: 2,
+        useSoftTabs: true,
+        enableBasicAutocompletion: true,
+        enableLiveAutocompletion: true
     });
     editor.setValue('{\n  \n}', -1);
 
