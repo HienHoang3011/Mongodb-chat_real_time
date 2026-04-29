@@ -43,7 +43,7 @@ async def execute_query(req: QueryRequest):
         raise HTTPException(status_code=500, detail="MongoDB connection string is not set or invalid.")
 
     try:
-        db = client[req.database]
+        db = client["ChatRealtimeDB"]
         collection = db[req.collection]
         q = req.query or {}
 
