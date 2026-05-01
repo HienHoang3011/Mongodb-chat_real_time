@@ -151,17 +151,98 @@
                         </tbody>
                     </table>
                 </div>
+
+                <h3>📑 Index Strategy</h3>
+
+                <h4>1. Collection users - Indexes</h4>
+                <div class="relation-item">
+                    <strong>idx_users_username</strong> (Unique)
+                    <code style="display: block; margin-top: 0.3rem; font-size: 0.8rem;">{ username: 1 }</code>
+                </div>
+                <div class="relation-item">
+                    <strong>idx_users_email</strong> (Unique)
+                    <code style="display: block; margin-top: 0.3rem; font-size: 0.8rem;">{ email: 1 }</code>
+                </div>
+                <div class="relation-item">
+                    <strong>idx_users_displayname_text</strong> (Text)
+                    <code style="display: block; margin-top: 0.3rem; font-size: 0.8rem;">{ display_name: "text" }</code>
+                </div>
+
+                <h4>2. Collection friendships - Indexes</h4>
+                <div class="relation-item">
+                    <strong>idx_friendships_pair</strong> (Unique Compound)
+                    <code style="display: block; margin-top: 0.3rem; font-size: 0.8rem;">{ requester_id: 1, recipient_id: 1 }</code>
+                </div>
+                <div class="relation-item">
+                    <strong>idx_friendships_recipient_status</strong>
+                    <code style="display: block; margin-top: 0.3rem; font-size: 0.8rem;">{ recipient_id: 1, status: 1 }</code>
+                </div>
+
+                <h4>3. Collection conversations - Indexes</h4>
+                <div class="relation-item">
+                    <strong>idx_conversations_members</strong>
+                    <code style="display: block; margin-top: 0.3rem; font-size: 0.8rem;">{ member_ids: 1 }</code>
+                </div>
+                <div class="relation-item">
+                    <strong>idx_conversations_updated</strong>
+                    <code style="display: block; margin-top: 0.3rem; font-size: 0.8rem;">{ updated_at: -1 }</code>
+                </div>
+                <div class="relation-item">
+                    <strong>idx_conversations_type_members_br2</strong>
+                    <code style="display: block; margin-top: 0.3rem; font-size: 0.8rem;">{ type: 1, member_ids: 1 }</code>
+                </div>
+
+                <h4>4. Collection conversation_members - Indexes</h4>
+                <div class="relation-item">
+                    <strong>idx_convmembers_user_conv</strong> (Unique)
+                    <code style="display: block; margin-top: 0.3rem; font-size: 0.8rem;">{ user_id: 1, conversation_id: 1 }</code>
+                </div>
+                <div class="relation-item">
+                    <strong>idx_convmembers_conv</strong>
+                    <code style="display: block; margin-top: 0.3rem; font-size: 0.8rem;">{ conversation_id: 1 }</code>
+                </div>
+
+                <h4>5. Collection messages - Indexes</h4>
+                <div class="relation-item">
+                    <strong>idx_messages_conv_time</strong>
+                    <code style="display: block; margin-top: 0.3rem; font-size: 0.8rem;">{ conversation_id: 1, created_at: -1 }</code>
+                </div>
+                <div class="relation-item">
+                    <strong>idx_messages_sender</strong>
+                    <code style="display: block; margin-top: 0.3rem; font-size: 0.8rem;">{ sender_id: 1 }</code>
+                </div>
+                <div class="relation-item">
+                    <strong>idx_messages_content_text</strong> (Text)
+                    <code style="display: block; margin-top: 0.3rem; font-size: 0.8rem;">{ content: "text" }</code>
+                </div>
+
+                <h4>6. Collection attachments - Indexes</h4>
+                <div class="relation-item">
+                    <strong>idx_attachments_uploader</strong>
+                    <code style="display: block; margin-top: 0.3rem; font-size: 0.8rem;">{ uploader_id: 1 }</code>
+                </div>
+
+                <h4>7. Collection notifications - Indexes</h4>
+                <div class="relation-item">
+                    <strong>idx_notifications_recipient</strong>
+                    <code style="display: block; margin-top: 0.3rem; font-size: 0.8rem;">{ recipient_id: 1, is_read: 1, created_at: -1 }</code>
+                </div>
+                <div class="relation-item">
+                    <strong>idx_notifications_ttl</strong> (TTL: 30 ngày)
+                    <code style="display: block; margin-top: 0.3rem; font-size: 0.8rem;">{ created_at: 1 } (expireAfterSeconds: 2592000)</code>
+                </div>
             </div>
         </aside>
 
         <!-- Main Content / Right Panel: Studio Tools -->
         <main class="studio-main glass-panel">
             <div class="workspace-area">
-                <section class="query-section">
-                    <div class="connection-group">
+                <!-- UI Mode Section -->
+                <section id="ui-mode" class="query-section">
+                    <div class="controls-group">
                         <input type="hidden" id="dbName" value="ChatRealtimeDB">
                         <div class="input-field">
-                            <label for="collectionName">Collection Name</label>
+                            <label for="collectionName">Collection</label>
                             <select id="collectionName" required>
                                 <option value="" disabled selected>Loading...</option>
                             </select>
@@ -179,26 +260,27 @@
                     </div>
 
                     <div class="editor-group">
-                        <label for="queryEditor">Query Body (JSON)</label>
+                        <label for="queryEditor">Query (JSON)</label>
                         <div id="queryEditor" class="editor-container"></div>
                     </div>
 
                     <button id="runQueryBtn" class="btn-primary">
-                        <span class="btn-text">Execute Query</span>
                         <svg class="icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                            <path d="M5 12H19M19 12L12 5M19 12L12 19" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                            <path d="M8 5v14l11-7z" fill="currentColor"/>
                         </svg>
+                        <span>Execute</span>
                     </button>
                 </section>
-            <section class="result-section">
-                <div class="result-header">
-                    <h2>Execution Results</h2>
-                    <div class="status-indicator" id="statusIndicator">Ready</div>
-                </div>
-                <div class="output-container">
-                    <pre id="resultOutput" class="code-block">// Results will appear here...</pre>
-                </div>
-            </section>
+
+                <section class="result-section">
+                    <div class="result-header">
+                        <h2>Results</h2>
+                        <div class="status-indicator" id="statusIndicator">Ready</div>
+                    </div>
+                    <div class="output-container">
+                        <pre id="resultOutput" class="code-block">// Results will appear here...</pre>
+                    </div>
+                </section>
             </div>
         </main>
     </div>
