@@ -13,29 +13,54 @@
 
 ## Hướng dẫn cài đặt và khởi chạy
 
-### Bước 1: Cài đặt Backend
+### Bước 1: Thiết lập môi trường ảo (Virtual Environment)
 
-1. Mở Terminal, đi tới thư mục project:
-   ```bash
-   cd d:\Classes\HCSQTDL-NoSQL
-   ```
+**Lần đầu tiên - Tạo môi trường ảo:**
 
-2. Kích hoạt virtual environment:
-   ```bash
-   .\venv\Scripts\Activate.ps1
-   ```
+Trên Windows (PowerShell):
+```bash
+python -m venv venv
+```
+
+Trên macOS/Linux (Terminal):
+```bash
+python3 -m venv venv
+```
+
+**Kích hoạt môi trường ảo:**
+
+Trên Windows (PowerShell):
+```bash
+.\venv\Scripts\Activate.ps1
+```
+
+Trên Windows (Command Prompt):
+```bash
+venv\Scripts\activate.bat
+```
+
+Trên macOS/Linux:
+```bash
+source venv/bin/activate
+```
+
+### Bước 2: Cài đặt Backend
+
+1. Mở Terminal, đi tới thư mục project của bạn
+
+2. Kích hoạt virtual environment (xem Bước 1 ở trên)
 
 3. Cài đặt các thư viện Python:
    ```bash
    pip install -r requirements.txt
    ```
 
-4. Khai báo chuỗi kết nối Database. Mở file `.env` ở trong thư mục root và điền link MongoDB Atlas:
+4. Khai báo chuỗi kết nối Database. Tạo file `.env` ở trong thư mục root và điền link MongoDB Atlas:
    ```env
    MONGO_URI=mongodb+srv://HienHoang:triplehptit2005@cluster0.mkefqur.mongodb.net/ChatRealtimeDB?retryWrites=true&w=majority
    ```
-
-### Bước 2: Khởi chạy API Server
+   
+### Bước 3: Khởi chạy API Server
 
 Từ thư mục `backend`:
 ```bash
@@ -48,7 +73,7 @@ Server lúc này sẽ bật tại `http://127.0.0.1:8000` và hiển thị:
 * Running on http://127.0.0.1:8000
 ```
 
-### Bước 3: Mở Giao Diện Web (Frontend)
+### Bước 4: Mở Giao Diện Web (Frontend)
 
 - Mở file `frontend/index.html` bằng trình duyệt web (hoặc dùng **Live Server** của VSCode)
 - Khi load trang, hệ thống sẽ tự động kết nối Backend tại `http://127.0.0.1:8000`
