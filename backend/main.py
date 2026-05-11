@@ -16,6 +16,17 @@ load_dotenv(os.path.join(os.path.dirname(__file__), '..', '.env'))
 app = Flask(__name__)
 CORS(app)
 
+
+def parse_extended_json(payload):
+    """Convert MongoDB Extended JSON payloads (e.g. {"$oid": "..."}) into BSON types."""
+    if payload is None:
+        return None
+
+    try:
+        return json_util.loads(json.dumps(payload))
+    except (TypeError, ValueError):
+        return payload
+
 # MongoDB connection setup
 MONGO_URI = os.getenv("MONGO_URI")
 if not MONGO_URI:
@@ -78,7 +89,7 @@ def execute_query():
         database = data.get('database')
         collection_name = data.get('collection')
         query_type = data.get('type')
-        query = data.get('query', {})
+        query = parse_extended_json(data.get('query', {}))
         
         if not database or not collection_name:
             return jsonify({"status": "error", "detail": "Database and collection are required"}), 400
